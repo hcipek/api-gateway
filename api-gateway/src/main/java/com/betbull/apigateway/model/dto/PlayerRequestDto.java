@@ -28,4 +28,8 @@ public class PlayerRequestDto {
 	private BigDecimal physicalPower;
 	private Long citizenshipNumber;
 	
+	public PlayerRequestDto() {
+		
+	}
+	
 }

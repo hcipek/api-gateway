@@ -106,15 +106,8 @@ public class ApiGatewayService {
 		String playerMarketApiUri = UriUtils.getRequestURI(EntityType.PLAYERMARKET, ParamType.ID, ActionType.GET, ActionType.CONTRACT_FEE);
 		PlayerMarketViewResponse response = new PlayerMarketViewResponse();
 		PlayerParamRequest request = new PlayerParamRequest(id);
-		try{
-			response = restTemplate.postForObject(playerMarketApiUri, request, PlayerMarketViewResponse.class);
-			return response;
-		} catch (Exception e) {
-			log.error(e.getLocalizedMessage());
-			response.setDescription("COMMON_UNKNOWN_ERROR");
-			response.setResultCode(900);
-			return response;
-		}
+		response = restTemplate.postForObject(playerMarketApiUri, request, PlayerMarketViewResponse.class);
+		return response;
 	}
 
 

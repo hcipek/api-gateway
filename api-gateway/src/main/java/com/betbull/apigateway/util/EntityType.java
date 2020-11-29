@@ -4,7 +4,8 @@ public enum EntityType {
 	
 	PLAYER("player"),
 	TEAM("team"),
-	PLAYERMARKET("playermarket");
+	PLAYERMARKET("playermarket"),
+	NONE("");
 	
 	public final String label;
 	 
