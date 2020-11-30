@@ -2,6 +2,7 @@ package com.betbull.apigateway.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import com.betbull.apigateway.model.request.PlayerParamRequest;
@@ -29,54 +30,117 @@ public class ApiGatewayService {
 	
 	public PlayerResponse createPlayer(PlayerRequest request) {
 		log.info("createPlayer started...");
-		String playerApiUri = UriUtils.getRequestURI(EntityType.PLAYER, ActionType.CREATE);
-		PlayerResponse response = restTemplate.postForObject(playerApiUri, request, PlayerResponse.class);
+		PlayerResponse response = new PlayerResponse();
+		try {
+			String playerApiUri = UriUtils.getRequestURI(EntityType.PLAYER, ActionType.CREATE);
+			response = restTemplate.postForObject(playerApiUri, request, PlayerResponse.class);
+		} catch (ResourceAccessException e) {
+			response.setDescription("CONNECTION_REFUSED");
+			response.setResultCode(901);
+		} catch (Exception e) {
+			log.error(e.getLocalizedMessage());
+			response.setDescription("COMMON_UNKNOWN_ERROR");
+			response.setResultCode(900);
+		}
 		return response;
 	}
 	
 	public TeamResponse createTeam(TeamRequest request) {
 		log.info("createTeam started...");
-		String teamApiUri = UriUtils.getRequestURI(EntityType.TEAM, ActionType.CREATE);
-		TeamResponse response = restTemplate.postForObject(teamApiUri, request, TeamResponse.class);
+		TeamResponse response = new TeamResponse();
+		try {
+			String teamApiUri = UriUtils.getRequestURI(EntityType.TEAM, ActionType.CREATE);
+			response = restTemplate.postForObject(teamApiUri, request, TeamResponse.class);
+		} catch (ResourceAccessException e) {
+			response.setDescription("CONNECTION_REFUSED");
+			response.setResultCode(901);
+		} catch (Exception e) {
+			log.error(e.getLocalizedMessage());
+			response.setDescription("COMMON_UNKNOWN_ERROR");
+			response.setResultCode(900);
+		}
 		return response;
 	}
 	
 	public PlayerMarketResponse getPlayerMarket() {
 		log.info("getPlayerMarket started...");
-		String playerMarketApiUri = UriUtils.getRequestURI(EntityType.PLAYERMARKET, ActionType.GET);
-		PlayerMarketResponse response = restTemplate.getForObject(playerMarketApiUri, PlayerMarketResponse.class);
+		PlayerMarketResponse response = new PlayerMarketResponse();
+		try {
+			String playerMarketApiUri = UriUtils.getRequestURI(EntityType.PLAYERMARKET, ActionType.GET);
+			response = restTemplate.getForObject(playerMarketApiUri, PlayerMarketResponse.class);
+		} catch(ResourceAccessException e) {
+			response.setDescription("CONNECTION_REFUSED");
+			response.setResultCode(901);
+		} catch (Exception e) {
+			log.error(e.getLocalizedMessage());
+			response.setDescription("COMMON_UNKNOWN_ERROR");
+			response.setResultCode(900);
+		}
 		return response;
 	}
 	
 	public PlayerMarketViewResponse getPlayerMarketForView() {
 		log.info("getPlayerMarketForView started...");
-		String playerMarketApiUri = UriUtils.getRequestURI(EntityType.PLAYERMARKET, ActionType.GET, ActionType.BASIC);
-		PlayerMarketViewResponse response = restTemplate.getForObject(playerMarketApiUri, PlayerMarketViewResponse.class);
+		PlayerMarketViewResponse response = new PlayerMarketViewResponse();;
+		try {
+			String playerMarketApiUri = UriUtils.getRequestURI(EntityType.PLAYERMARKET, ActionType.GET, ActionType.BASIC);
+			response = restTemplate.getForObject(playerMarketApiUri, PlayerMarketViewResponse.class);
+		} catch(ResourceAccessException e) {
+			response.setDescription("CONNECTION_REFUSED");
+			response.setResultCode(901);
+		} catch (Exception e) {
+			log.error(e.getLocalizedMessage());
+			response.setDescription("COMMON_UNKNOWN_ERROR");
+			response.setResultCode(900);
+		}
 		return response;
 	}
 	
 	public MultiPlayerResponse getAllPlayers() {
 		log.info("getAllPlayers started...");
-		String playerApiUri = UriUtils.getRequestURI(EntityType.PLAYER, ActionType.GET, ActionType.ALL);
-		MultiPlayerResponse response = restTemplate.getForObject(playerApiUri, MultiPlayerResponse.class);
+		MultiPlayerResponse response = new MultiPlayerResponse();
+		try {
+			String playerApiUri = UriUtils.getRequestURI(EntityType.PLAYER, ActionType.GET, ActionType.ALL);
+			response = restTemplate.getForObject(playerApiUri, MultiPlayerResponse.class);
+		} catch(ResourceAccessException e) {
+			response.setDescription("CONNECTION_REFUSED");
+			response.setResultCode(901);
+		} catch (Exception e) {
+			log.error(e.getLocalizedMessage());
+			response.setDescription("COMMON_UNKNOWN_ERROR");
+			response.setResultCode(900);
+		}
 		return response;
 	}
 	
 	public MultiTeamResponse getAllTeams() {
 		log.info("getAllTeams started...");
-		String teamApiUri = UriUtils.getRequestURI(EntityType.TEAM, ActionType.GET, ActionType.ALL);
-		MultiTeamResponse response = restTemplate.getForObject(teamApiUri, MultiTeamResponse.class);
+		MultiTeamResponse response = new MultiTeamResponse();
+		try {
+			String teamApiUri = UriUtils.getRequestURI(EntityType.TEAM, ActionType.GET, ActionType.ALL);
+			response = restTemplate.getForObject(teamApiUri, MultiTeamResponse.class);
+		} catch(ResourceAccessException e) {
+			response.setDescription("CONNECTION_REFUSED");
+			response.setResultCode(901);
+		} catch (Exception e) {
+			log.error(e.getLocalizedMessage());
+			response.setDescription("COMMON_UNKNOWN_ERROR");
+			response.setResultCode(900);
+		}
 		return response;
 	}
 	
 	public PlayerResponse deletePlayerById(Long id) {
 		log.info("Deleting player with id : {} started...", id);
 		PlayerResponse response = new PlayerResponse();
-		String playerApiUri = UriUtils.getRequestURI(EntityType.PLAYER, ParamType.ID_PARAM, ActionType.DELETE);
 		try{
+			String playerApiUri = UriUtils.getRequestURI(EntityType.PLAYER, ParamType.ID_PARAM, ActionType.DELETE);
 			restTemplate.delete(playerApiUri+id);
 			response.setDescription("SUCCESS");
 			response.setResultCode(0);
+		} catch (ResourceAccessException e) {
+			response.setDescription("CONNECTION_REFUSED");
+			response.setResultCode(901);
 		} catch (Exception e) {
 			log.error(e.getLocalizedMessage());
 			response.setDescription("COMMON_UNKNOWN_ERROR");
@@ -88,11 +152,14 @@ public class ApiGatewayService {
 	public TeamResponse deleteTeamById(Long id) {
 		log.info("Deleting player with id : {} started...", id);
 		TeamResponse response = new TeamResponse();
-		String teamApiUri = UriUtils.getRequestURI(EntityType.TEAM, ParamType.ID_PARAM, ActionType.DELETE);
 		try{
+			String teamApiUri = UriUtils.getRequestURI(EntityType.TEAM, ParamType.ID_PARAM, ActionType.DELETE);
 			restTemplate.delete(teamApiUri+id);
 			response.setDescription("SUCCESS");
 			response.setResultCode(0);
+		} catch (ResourceAccessException e) {
+			response.setDescription("CONNECTION_REFUSED");
+			response.setResultCode(901);
 		} catch (Exception e) {
 			log.error(e.getLocalizedMessage());
 			response.setDescription("COMMON_UNKNOWN_ERROR");
@@ -103,12 +170,19 @@ public class ApiGatewayService {
 	
 	public PlayerMarketViewResponse getPlayerSalaryById(Long id) {
 		log.info("getPlayerSalaryById : {} started...", id);
-		String playerMarketApiUri = UriUtils.getRequestURI(EntityType.PLAYERMARKET, ParamType.ID, ActionType.GET, ActionType.CONTRACT_FEE);
 		PlayerMarketViewResponse response = new PlayerMarketViewResponse();
-		PlayerParamRequest request = new PlayerParamRequest(id);
-		response = restTemplate.postForObject(playerMarketApiUri, request, PlayerMarketViewResponse.class);
+		try {
+			String playerMarketApiUri = UriUtils.getRequestURI(EntityType.PLAYERMARKET, ParamType.ID, ActionType.GET, ActionType.CONTRACT_FEE);
+			response = restTemplate.postForObject(playerMarketApiUri, new PlayerParamRequest(id), PlayerMarketViewResponse.class);
+		} catch (ResourceAccessException e) {
+			response.setDescription("CONNECTION_REFUSED");
+			response.setResultCode(901);
+		} catch (Exception e) {
+			log.error(e.getLocalizedMessage());
+			response.setDescription("COMMON_UNKNOWN_ERROR");
+			response.setResultCode(900);
+		}
 		return response;
 	}
-
 
 }
